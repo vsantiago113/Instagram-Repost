@@ -130,3 +130,9 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Flask-Boilerplate application
+Flask_Boilerplate.egg-info/
+
+# Custom
+data/

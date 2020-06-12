@@ -1,0 +1,13 @@
+{% extends 'ig_repost/layout.html' %}
+
+{% block title %}Instagram Repost | HOME{% endblock %}
+
+{% block content %}
+    {% for i in history %}
+<div class="row">
+    <div class="col-md-4 mt-5">
+        <img class="rounded-circle img-fluid" src="{{ i.img }}" alt="Instagram profile image for {{ i.username }}.">
+    </div>
+</div>
+    {% endfor %}
+{% endblock %}
