@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}Repost{% endblock %}
+
+{% block content %}
+<h1>Post Media</h1>
+<ul>
+    {% for i in post_media %}
+    <li><a href="{{ i }}" target="_blank">Media: <b>{{ loop.index }}</b></a></li>
+    {% endfor %}
+</ul>
+<hr>
+
+<h1>Tagged Users</h1>
+<h5 class="text-muted">Total tags found: {{ post_tagged_users|length }}</h5>
+<ul>
+    {% for i in post_tagged_users %}
+        <li>{{ i }}</li>
+    {% endfor %}
+</ul>
+<hr>
+
+<h1>Hash Tags</h1>
+<h5 class="text-muted">Total tags found: {{ post_hash_tags|length }}</h5>
+<p>
+{% for i in post_hash_tags %}
+    {{ i }}
+{% endfor %}
+</p>
+<hr>
+
+<h1>Location</h1>
+{{ post_location }}
+<hr>
+
+<h1>Caption</h1>
+{{ post_caption|safe }}
+<hr>
+{% endblock %}

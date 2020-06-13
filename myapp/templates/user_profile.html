@@ -1,27 +1,45 @@
 {% extends 'layout.html' %}
 
+{% block title %}User Profile{% endblock %}
+
+{% block style %}
+<style>
+.img {
+  position: relative;
+}
+
+.img i {
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row mt-5">
     <div class="col-md-4">
-        <img class="rounded-circle" src="{{ data['graphql']['user']['profile_pic_url'] }}" alt="Profile image for user {{ data['graphql']['user']['username'] }}">
+        <img class="rounded-circle" src="{{ user_data['graphql']['user']['profile_pic_url'] }}" alt="Profile image for user {{ user_data['graphql']['user']['username'] }}">
     </div>
     <div class="col-md-8">
         <div class="row">
             <div class="col-md-12">
-                <h1>{{ data['graphql']['user']['username'] }}</h1>
+                <h1>{{ user_data['graphql']['user']['username'] }}</h1>
             </div>
             <div class="col-md-4">
-                <h5>{{ data['graphql']['user']['edge_owner_to_timeline_media']['count'] }} posts</h5>
+                <h5>{{ user_data['graphql']['user']['edge_owner_to_timeline_media']['count'] }} posts</h5>
             </div>
             <div class="col-md-4">
-                <h5>{{ data['graphql']['user']['edge_followed_by']['count'] }} followers</h5>
+                <h5>{{ user_data['graphql']['user']['edge_followed_by']['count'] }} followers</h5>
             </div>
             <div class="col-md-4">
-                <h5>{{ data['graphql']['user']['edge_follow']['count'] }} following</h5>
+                <h5>{{ user_data['graphql']['user']['edge_follow']['count'] }} following</h5>
             </div>
             <div class="col-md-12">
-                <h5>{{ data['graphql']['user']['full_name'] }}</h5>
-                <p>{{ data['graphql']['user']['biography'].replace('\n', '<br />')|safe }}</p>
+                <h5>{{ user_data['graphql']['user']['full_name'] }}</h5>
+                <p>{{ user_data['graphql']['user']['biography'].replace('\n', '<br />')|safe }}</p>
             </div>
         </div>
     </div>
@@ -32,9 +50,16 @@
 <h3 class="text-muted text-center">Posts</h3>
 
 <div class="row mb-5">
-    {% for i in data['graphql']['user']['edge_owner_to_timeline_media']['edges'] %}
+    {% for i in user_posts['data']['user']['edge_owner_to_timeline_media']['edges'] %}
     <div class="col-md-4 mb-5">
-        <img class="rounded img-fluid" src="{{ i['node']['thumbnail_src'] }}" alt="">
+        <div class="img">
+            {% if i['node']['is_video'] %}
+                <i class="far fa-play-circle fa-5x text-white"></i>
+            {% elif i['node'].get('edge_sidecar_to_children') %}
+                <i class="far fa-images fa-5x text-white"></i>
+            {% endif %}
+            <img class="rounded img-fluid" src="{{ i['node']['thumbnail_src'] }}" alt="">
+        </div>
         <div class="row">
             <div class="col-md-6">
                 <i class="fas fa-heart" style="color: red;"> {{ i['node']['edge_media_preview_like']['count'] }}</i>
@@ -47,4 +72,12 @@
     </div>
     {% endfor %}
 </div>
+
+{% if pagination %}
+    <div>
+        <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="{{ url_for('user_profile', history='false', username=username, has_next_page='true', end_cursor=end_cursor) }}">Next</a></li>
+        </ul>
+    </div>
+{% endif %}
 {% endblock %}

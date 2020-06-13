@@ -47,17 +47,19 @@ if has_next is True:
         has_next = user_posts['page_info']['has_next_page']
 
         all_user_posts.extend(user_posts['edges'])
+        # print(json.dumps(r.json(), indent=4))
+        # break
 
-    # Get newest post and pull details with comments
-    newest_post = user_posts['edges'][0]
-    if newest_post:
-        r = requests.get(query_url, params={'query_hash': query_hash_comments.group('queryId'),
-                                            'shortcode': newest_post['node']['shortcode'],
-                                            'child_comment_count': 3,
-                                            'fetch_comment_count': 40,
-                                            }
-                         )
-        print(json.dumps(r.json(), indent=4))
+    # # Get newest post and pull details with comments
+    # newest_post = user_posts['edges'][0]
+    # if newest_post:
+    #     r = requests.get(query_url, params={'query_hash': query_hash_comments.group('queryId'),
+    #                                         'shortcode': newest_post['node']['shortcode'],
+    #                                         'child_comment_count': 3,
+    #                                         'fetch_comment_count': 40,
+    #                                         }
+    #                      )
+    #     print(json.dumps(r.json(), indent=4))
 
 all_data['graphql']['user']['edge_owner_to_timeline_media']['edges'] = all_user_posts
 
