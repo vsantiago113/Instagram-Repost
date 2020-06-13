@@ -1,13 +1,28 @@
-{% extends 'ig_repost/layout.html' %}
+{% extends 'layout.html' %}
 
 {% block title %}Instagram Repost | HOME{% endblock %}
 
 {% block content %}
-    {% for i in history %}
+<h1>History</h1>
+<hr>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="True">×</span>
+                </button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 <div class="row">
-    <div class="col-md-4 mt-5">
-        <img class="rounded-circle img-fluid" src="{{ i.img }}" alt="Instagram profile image for {{ i.username }}.">
-    </div>
-</div>
+    {% for i in history %}
+        <div class="col-md-4 col-lg-4 col-xl-4">
+            <img class="rounded-circle img-fluid mx-auto d-block mt-5" src="{{ i.img }}" alt="Instagram profile image for {{ i.username }}.">
+            <a class="stretched-link" href="{{ url_for('user_profile', username=i.username, history=true) }}"><h4 class="text-center">{{ i.username }}</h4></a>
+        </div>
     {% endfor %}
+</div>
 {% endblock %}

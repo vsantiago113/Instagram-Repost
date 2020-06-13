@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %}Post{% endblock %}
+
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="True">×</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    {% if data %}
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <img class="rounded-circle" src="{{ data['data']['shortcode_media']['owner']['profile_pic_url'] }}" alt="Profile image for user {{ data['data']['shortcode_media']['owner']['username'] }}">
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>{{ data['data']['shortcode_media']['owner']['username'] }}</h1>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>{{ data['data']['shortcode_media']['owner']['edge_owner_to_timeline_media']['count'] }} posts</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>{{ data['data']['shortcode_media']['owner']['edge_followed_by']['count'] }} followers</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <h5>{{ data['data']['shortcode_media']['owner']['full_name'] }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="row mt-5 mb-5 border">
+            <div class="col-md-7">
+                <img class="rounded img-fluid" src="{{ data['data']['shortcode_media']['display_url'] }}" alt="">
+            </div>
+            <div class="col-md-5 overflow-auto">
+                <p>{{ data['data']['shortcode_media']['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', '<br />')|safe }}</p>
+            </div>
+            <div class="d-inline-flex justify-content-between  flex-fill">
+                <div class="p-2">
+                    <i class="far fa-heart" style="color: red;"></i> {{ data['data']['shortcode_media']['edge_media_preview_like']['count'] }}
+                </div>
+                <div class="p-2">
+                    <i class="far fa-comment" style="color: green;"></i> {{ data['data']['shortcode_media']['edge_media_to_comment']['count'] }}
+                </div>
+                <div class="p-2">
+                    <a href="{{ data['data']['shortcode_media']['display_url'] }}" target="_blank"><i class="far fa-save"></i></a>
+                </div>
+                <div class="p-2">
+                    <i class="fas fa-file-export"></i>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
