@@ -2,6 +2,26 @@
 
 {% block title %}Home{% endblock %}
 
+{% block style %}
+<style>
+.img {
+  position: relative;
+}
+
+.img i {
+  top: 10%;
+  left: 10%;
+  position: absolute;
+  transform: translate(-10%, -10%);
+  color: black;
+}
+
+.img i:hover {
+    color: red;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <h1>History</h1>
 <hr>
@@ -20,8 +40,11 @@
 <div class="row">
     {% for i in history %}
         <div class="col-md-4 col-lg-4 col-xl-4">
-            <img class="rounded-circle img-fluid mx-auto d-block mt-5" src="{{ i.img }}" alt="Instagram profile image for {{ i.username }}.">
-            <a class="stretched-link" href="{{ url_for('user_profile', username=i.username, history=true) }}"><h4 class="text-center">{{ i.username }}</h4></a>
+            <div class="img">
+                <a href="{{ url_for('delete', username=i.username) }}"><i class="far fa-trash-alt fa-2x"></i></a>
+                <a href="{{ url_for('user_profile', username=i.username, history=true) }}"><img class="rounded-circle img-fluid mx-auto d-block mt-5" src="{{ i.img }}" alt="Instagram profile image for {{ i.username }}."></a>
+            </div>
+            <a href="{{ url_for('user_profile', username=i.username, history=true) }}"><h4 class="text-center">{{ i.username }}</h4></a>
         </div>
     {% endfor %}
 </div>

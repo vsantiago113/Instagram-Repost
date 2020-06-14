@@ -81,7 +81,9 @@
                 {% endif %}
             </div>
             <div class="col-md-5 overflow-auto">
-                <p>{{ data['data']['shortcode_media']['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', '<br />')|safe }}</p>
+                {% if data['data']['shortcode_media']['edge_media_to_caption']['edges'] %}
+                    <p>{{ data['data']['shortcode_media']['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', '<br />')|safe }}</p>
+                {% endif %}
             </div>
             <div class="d-inline-flex justify-content-between  flex-fill">
                 <div class="p-2">

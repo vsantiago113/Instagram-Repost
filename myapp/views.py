@@ -92,7 +92,7 @@ def user_profile(username, history, has_next_page, end_cursor):
 
                 r = requests.get(f'https://instagram.com/{js_file_post.group()}')
                 query_hash_post = re.search(
-                    r'actionHandler:.*Object.defineProperty\(e,\'__esModule\',{value:!0}\);(const|var) \w=\"(?P<queryId>\w+)\"',
+                    r'actionHandler:.*Object.defineProperty\(e,\'__esModule\',{value:!0}\);(const|var)\s\w=\"(?P<queryId>\w+)\"',
                     r.text)
 
                 data = {'username': user_data['graphql']['user']['username'],
@@ -104,17 +104,19 @@ def user_profile(username, history, has_next_page, end_cursor):
                 with open(f'myapp/data/cashed/{username}.json', 'w') as f:
                     json.dump(data, f)
 
-                r = requests.get('https://instagram.com/graphql/query', params={'query_hash': query_hash_posts.group("queryId"),
-                                                                                'id': user_data['graphql']['user']['id'],
-                                                                                'first': 24,
-                                                                                }
+                r = requests.get('https://instagram.com/graphql/query',
+                                 params={'query_hash': query_hash_posts.group("queryId"),
+                                         'id': user_data['graphql']['user']['id'],
+                                         'first': 24,
+                                         }
                                  )
                 user_posts = r.json()
 
-                has_next_page = str(user_posts['data']['user']['edge_owner_to_timeline_media']['page_info']['has_next_page'])
+                page_info = user_posts['data']['user']['edge_owner_to_timeline_media']['page_info']
+                has_next_page = str(page_info['has_next_page'])
                 if has_next_page.lower() == 'true':
                     pagination = True
-                    end_cursor = user_posts['data']['user']['edge_owner_to_timeline_media']['page_info']['end_cursor']
+                    end_cursor = page_info['end_cursor']
                 else:
                     pagination = None
                     end_cursor = None
@@ -155,32 +157,39 @@ def repost(username, shortcode):
                                                                     'fetch_comment_count': 40,
                                                                     }
                      )
-    print(json.dumps(r.json(), indent=4))
-    post = r.json()['data']['shortcode_media']
-    if post['is_video']:
-        post_media = [post['video_url']]
+    user_post = r.json()['data']['shortcode_media']
+    if user_post['is_video']:
+        post_media = [user_post['video_url']]
     else:
         post_media = []
-        if post.get('edge_sidecar_to_children') is not None:
-            for sub_image in post['edge_sidecar_to_children']['edges']:
+        if user_post.get('edge_sidecar_to_children') is not None:
+            for sub_image in user_post['edge_sidecar_to_children']['edges']:
                 media_url = sub_image['node']['display_url']
                 post_media.append(media_url)
         else:
-            post_media = [post['display_url']]
+            post_media = [user_post['display_url']]
 
     post_tagged_users = []
-    for i in post['edge_media_to_tagged_user']['edges']:
+    for i in user_post['edge_media_to_tagged_user']['edges']:
         post_tagged_users.append(i['node']['user']['username'])
-    for i in re.findall(r'[@][\w\-.]+', post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', ' ')):
+    for i in re.findall(r'[@][\w\-.]+',
+                        user_post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', ' ')):
         post_tagged_users.append(i.strip('@'))
     post_tagged_users = list(set(post_tagged_users))
-    post_hash_tags = re.findall(r'[#][\w\-.]+', post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', ' '))
+    post_hash_tags = re.findall(r'[#][\w\-.]+',
+                                user_post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', ' '))
     post_hash_tags = list(set(post_hash_tags))
-    if post.get('location'):
-        post_location = post['location']['name']
+    if user_post.get('location'):
+        post_location = user_post['location']['name']
     else:
         post_location = ''
-    post_caption = post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', '<br />')
+    post_caption = user_post['edge_media_to_caption']['edges'][0]['node']['text'].replace('\n', '<br />')
 
     return render_template('repost.html', post_media=post_media, post_tagged_users=post_tagged_users,
                            post_hash_tags=post_hash_tags, post_location=post_location, post_caption=post_caption)
+
+
+@application.route('/delete/<username>')
+def delete(username):
+    os.remove(f'myapp/data/cashed/{username}.json')
+    return redirect(url_for('home'))
