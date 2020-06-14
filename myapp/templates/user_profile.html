@@ -61,10 +61,10 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <i class="fas fa-heart" style="color: red;"> {{ i['node']['edge_media_preview_like']['count'] }}</i>
+                <i class="far fa-heart" style="color: red;"></i></i> {{ i['node']['edge_media_preview_like']['count'] }}
             </div>
             <div class="col-md-6">
-                <i class="fas fa-comments" style="color: green;"> {{ i['node']['edge_media_to_comment']['count'] }}</i>
+                <i class="far fa-comment" style="color: green;"></i> {{ i['node']['edge_media_to_comment']['count'] }}
             </div>
         </div>
         <a class="stretched-link" href="{{ url_for('post', username=i['node']['owner']['username'], shortcode=i['node']['shortcode']) }}"></a>
